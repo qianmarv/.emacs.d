@@ -1,0 +1,149 @@
+;;-------------------------------------------
+;; Package Related
+;;-------------------------------------------
+(setq package-check-signature nil)
+
+(require 'package)
+(setq package-archives
+      '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
+		("org-cn"   . "https://elpa.emacs-china.org/org/")
+		("gnu-cn"   . "https://elpa.emacs-china.org/gnu/")))
+;;(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+;;                         ("marmalade" . "https://marmalade-repo.org/packages/")
+;;                         ("melpa" . "https://melpa.org/packages/")))
+(setq package-enable-at-startup nil)
+(package-initialize)
+
+;; Bootstrap config
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+;; (defvar my-packages '(ace-jump-mode
+;; 					  helm
+;; 					  ;;					  smex
+;; 					  smartparens
+;; 					  solarized-theme
+;; 					  use-package
+;; 					  web-mode
+;; 					  winum))
+
+;; (defun my-update-packages(package-list)
+;;   (dolist (p package-list)
+;; 	(unless (package-installed-p p)
+;; 	  (package-refresh-contents)
+;; 	  (message "Package %s is missing, now installing..." p)
+;; 	  (package-install p))
+;; 	(add-to-list 'package-selected-packages p)))
+
+;; (my-update-packages my-packages)
+
+
+;;-------------------------------------------
+;; Personal Information
+;;-------------------------------------------
+(setq user-full-name "Marvin Qian")
+(setq user-mail-address "qianmarv@gmail.com")
+
+;;-------------------------------------------
+;; Personalization
+;;-------------------------------------------
+
+;; Default theme
+(load-theme 'solarized-dark t)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(toggle-scroll-bar -1)
+
+;; Garbage Collection
+(setq gc-cons-threshold (* 64 1024 1024))
+(setq gc-cons-percentag 0.5)
+
+;; Rebind comment
+(global-set-key (kbd "C-c C-l") 'comment-line)
+
+;; disable emacs backup file
+;; Or (setq make-backup-files nil)
+(setq backup-inhibited t)
+
+(setq custom-file (concat user-emacs-directory "custom.el"))
+
+
+;;-------------------------------------------
+;; helm - config with use-package
+;;-------------------------------------------
+;;(require 'helm-config)
+;; (use-package helm-config
+;;   :ensure helm
+;;   :bind (("M-x" . helm-M-x)
+;; 		 ("C-x C-f" . helm-find-files)
+;; 		 ("C-x b" . helm-buffers-list))
+;;   :config
+;;   (progn
+;; 	(helm-mode 1)))
+
+;;-------------------------------------------
+;; smartparens - config with use-package
+;;-------------------------------------------
+(use-package smartparens-config
+  :ensure smartparens
+  :config
+  (progn
+    (show-smartparens-global-mode t)))
+
+;; (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
+;; (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
+
+;;-------------------------------------------
+;; ace-jump-mode - config with use-package
+;;-------------------------------------------
+(use-package ace-jump-mode
+  :commands ace-jump-mode
+  :init
+  (bind-key "C-." 'ace-jump-mode))
+
+;; (use-package better-defaults
+;;   :ensure t
+;;   :init)
+
+(use-package ivy
+  :ensure t
+  :config
+  (progn
+    (ivy-mode t)))
+;;-------------------------------------------
+;; winum - config with use-package
+;;-------------------------------------------
+(use-package winum
+  :ensure t
+  :init
+  (progn
+    (setq window-numbering-scope           'global
+          window-reverse-frame-list         nil
+          winum-auto-assign-0-to-minibuffer nil
+          winum-auto-setup-mode-line        t
+          winnum-format                    " %s"
+          winum-ignored-buffers            '(" *which-key*")
+          winum-keymap                     (let ((map (make-sparse-keymap)))
+			                                 (define-key map (kbd "C-`") 'winum-select-window-by-number)
+			                                 (define-key map (kbd "C-²") 'winum-select-window-by-number)
+			                                 (define-key map (kbd "M-0") 'winum-select-window-0-or-10)
+			                                 (define-key map (kbd "M-1") 'winum-select-window-1)
+			                                 (define-key map (kbd "M-2") 'winum-select-window-2)
+			                                 (define-key map (kbd "M-3") 'winum-select-window-3)
+			                                 (define-key map (kbd "M-4") 'winum-select-window-4)
+			                                 (define-key map (kbd "M-5") 'winum-select-window-5)
+			                                 (define-key map (kbd "M-6") 'winum-select-window-6)
+			                                 (define-key map (kbd "M-7") 'winum-select-window-7)
+			                                 (define-key map (kbd "M-8") 'winum-select-window-8)
+			                                 map))
+    (winum-mode)))
+  ;; :config
+  ;; (progn
+  ;;   (winum-mode)      
+  ;;   (set-face-attribute 'winum-face nil :weight 'bold))
+
+
+(when (file-exists-p custom-file)
+  (load custom-file))
