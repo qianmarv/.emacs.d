@@ -95,6 +95,12 @@
 ;; (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
 ;; (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
 
+(use-package projectile
+  :ensure t
+  :config
+  (progn
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)    
+    (projectile-mode 1)))
 ;;-------------------------------------------
 ;; ace-jump-mode - config with use-package
 ;;-------------------------------------------
@@ -107,11 +113,34 @@
 ;;   :ensure t
 ;;   :init)
 
-(use-package ivy
+;; (use-package ivy
+;;   :ensure t
+;;   :config
+;;   (progn
+;;     (ivy-mode t)))
+
+(use-package counsel
+  :ensure ivy
+  :config
+  (progn
+    (setq ivy-use-virtual-buffers t)
+    (setq enable-recursive-minibuffers t)
+    (setq ivy-count-format "(%d/%d) ")
+    (global-set-key "\C-s" 'swiper)    
+    (counsel-mode 1)))
+
+;; (use-package swiper
+;;   :ensure ivy
+;;   :config
+;;   (progn
+;;     ))
+
+(use-package counsel-projectile
   :ensure t
   :config
   (progn
-    (ivy-mode t)))
+    (counsel-projectile-mode)))
+
 ;;-------------------------------------------
 ;; winum - config with use-package
 ;;-------------------------------------------
