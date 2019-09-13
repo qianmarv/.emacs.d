@@ -10,6 +10,6 @@
 # Undo-tree save-files
 *.~undo-tree
 
-elpa/
+elpa-*/
 projectile-bookmarks.eld
 recentf
