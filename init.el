@@ -1,5 +1,5 @@
 ;;-------------------------------------------
-;; Package Related
+;; Package Related Settings
 ;;-------------------------------------------
 (setq package-check-signature nil)
 
@@ -8,33 +8,32 @@
       '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
 		("org-cn"   . "https://elpa.emacs-china.org/org/")
 		("gnu-cn"   . "https://elpa.emacs-china.org/gnu/")))
+
+;; Alternative: Don't Delete Below - Used for Non-China Mirrors
 ;;(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
 ;;                         ("marmalade" . "https://marmalade-repo.org/packages/")
 ;;                         ("melpa" . "https://melpa.org/packages/")))
+
 (setq package-enable-at-startup nil)
+
 (package-initialize)
 
-;; Bootstrap config
+;; Customizing config
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
-;; (defvar my-packages '(ace-jump-mode
-;; 					  helm
-;; 					  ;;					  smex
-;; 					  smartparens
-;; 					  solarized-theme
-;; 					  use-package
-;; 					  web-mode
-;; 					  winum))
+;; Init Required Packages
+(defvar base-packages '(
+			          solarized-theme
+ 					  use-package ))
 
-;; (defun my-update-packages(package-list)
-;;   (dolist (p package-list)
-;; 	(unless (package-installed-p p)
-;; 	  (package-refresh-contents)
-;; 	  (message "Package %s is missing, now installing..." p)
-;; 	  (package-install p))
-;; 	(add-to-list 'package-selected-packages p)))
+(defun my/install-missing-packages(package-list)
+  (dolist (p package-list)
+ 	(unless (package-installed-p p)
+ 	  (package-refresh-contents)
+      (package-install p))
+ 	(add-to-list 'package-selected-packages p)))
 
-;; (my-update-packages my-packages)
+(my/install-missing-packages base-packages)
 
 
 ;;-------------------------------------------
@@ -43,9 +42,6 @@
 (setq user-full-name "Marvin Qian")
 (setq user-mail-address "qianmarv@gmail.com")
 
-;;-------------------------------------------
-;; Personalization
-;;-------------------------------------------
 
 ;; Default theme
 (load-theme 'solarized-dark t)
@@ -65,23 +61,11 @@
 
 ;; disable emacs backup file
 ;; Or (setq make-backup-files nil)
+
 (setq backup-inhibited t)
 
 (setq custom-file (concat user-emacs-directory "custom.el"))
 
-
-;;-------------------------------------------
-;; helm - config with use-package
-;;-------------------------------------------
-;;(require 'helm-config)
-;; (use-package helm-config
-;;   :ensure helm
-;;   :bind (("M-x" . helm-M-x)
-;; 		 ("C-x C-f" . helm-find-files)
-;; 		 ("C-x b" . helm-buffers-list))
-;;   :config
-;;   (progn
-;; 	(helm-mode 1)))
 
 ;;-------------------------------------------
 ;; smartparens - config with use-package
@@ -90,10 +74,8 @@
   :ensure smartparens
   :config
   (progn
-    (show-smartparens-global-mode t)))
-
-;; (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
-;; (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
+    (show-smartparens-global-mode t)
+    (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)))
 
 (use-package projectile
   :ensure t
@@ -105,6 +87,7 @@
 ;; ace-jump-mode - config with use-package
 ;;-------------------------------------------
 (use-package ace-jump-mode
+  :ensure t
   :commands ace-jump-mode
   :init
   (bind-key "C-." 'ace-jump-mode))
@@ -168,10 +151,10 @@
 			                                 (define-key map (kbd "M-8") 'winum-select-window-8)
 			                                 map))
     (winum-mode)))
-  ;; :config
-  ;; (progn
-  ;;   (winum-mode)      
-  ;;   (set-face-attribute 'winum-face nil :weight 'bold))
+;; :config
+;; (progn
+;;   (winum-mode)      
+;;   (set-face-attribute 'winum-face nil :weight 'bold))
 
 
 (when (file-exists-p custom-file)
