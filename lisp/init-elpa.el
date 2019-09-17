@@ -1,5 +1,7 @@
 ;; init-elpa.el --- Settings and helpers for package.el -*- lexical-binding: t -*-
+
 ;;; Commentary:
+
 ;;; Code:
 
 (require 'package)
@@ -14,14 +16,14 @@
 
 (require 'package)
 (setq package-archives
-      '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
+     '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
 		("org-cn"   . "https://elpa.emacs-china.org/org/")
 		("gnu-cn"   . "https://elpa.emacs-china.org/gnu/")))
 
 ;; Alternative: Don't Delete Below - Used for Non-China Mirrors
-;;(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-;;                         ("marmalade" . "https://marmalade-repo.org/packages/")
-;;                         ("melpa" . "https://melpa.org/packages/")))
+;; (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ;; ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ;; ("melpa" . "https://melpa.org/packages/")))
 
 (setq package-enable-at-startup nil)
 
@@ -29,8 +31,9 @@
 
 ;; Init Required Packages
 (defvar base-packages '(
-			          solarized-theme
- 					  use-package ))
+			            solarized-theme
+                        monokai-theme
+ 					    use-package ))
 
 (defun my/install-missing-packages(package-list)
   (dolist (p package-list)

@@ -1,4 +1,3 @@
-
 ;;; init.el --- Load the full configuration -*- lexical-binding: t -*-
 ;;; Commentary:
 
@@ -20,7 +19,6 @@
 (setq gc-cons-threshold (* 128 1024 1024))
 (setq gc-cons-percentag 0.5)
 
-
 ;;----------------------------------------------------------------------------
 ;; Bootstrap config
 ;;----------------------------------------------------------------------------
@@ -28,7 +26,7 @@
 
 (require 'init-elpa)      ;; Machinery for installing required packages
 
-(require 'init-recentf)
+(require 'init-dashboard)
 
 (require 'init-ivy)
 

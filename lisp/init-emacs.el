@@ -2,16 +2,16 @@
 ;;; Commentary:
 ;;; Code:
 
-;;-------------------------------------------
+;;----------------------------------------------------------------------------
 ;; Personal Information
-;;-------------------------------------------
+;;----------------------------------------------------------------------------
 (setq user-full-name "Marvin Qian")
 (setq user-mail-address "qianmarv@gmail.com")
 
 
-;;-------------------------------------------
-;; Default Settings
-;;-------------------------------------------
+;;----------------------------------------------------------------------------
+;; Better Default Settings
+;;----------------------------------------------------------------------------
 (setq backup-inhibited t)
 
 (tool-bar-mode -1)
@@ -24,13 +24,28 @@
 
 (setq-default tab-width 4)
 
+(delete-selection-mode 1)
+
+(fset 'yes-or-no-p 'y-or-n-p)
+
 ;; Default Theme
 (load-theme 'solarized-dark t)
 
-;;-------------------------------------------
+
+;; Highligh Line
+(global-hl-line-mode 1)
+
+;;----------------------------------------------------------------------------
+;; Powerline
+;; TODO move to init-ui.el or somewhere else
+;;----------------------------------------------------------------------------
+(use-package smart-mode-line
+  :ensure t)
+
+;;----------------------------------------------------------------------------
 ;; emacs-which-key
 ;; https://github.com/justbur/emacs-which-key
-;;-------------------------------------------
+;;----------------------------------------------------------------------------
 (use-package which-key
   :ensure t
   :init
@@ -40,10 +55,32 @@
     (which-key-setup-minibuffer)    
     (which-key-mode)))
 
+;;----------------------------------------------------------------------------
+;; Recentf
+;; Reference to Purcell's init-recentf
+;;----------------------------------------------------------------------------
+(add-hook 'after-init-hook 'recentf-mode)
+(setq-default
+ recentf-max-saved-items 100
+ recentf-exclude '("/tmp/" "/ssh:"))
 
-;;-------------------------------------------
+;;----------------------------------------------------------------------------
+;; Dired-Mode
+;; Refer to http://book.emacs-china.org/#orgheadline9
+;;----------------------------------------------------------------------------
+(put 'dired-find-alternate-file 'disabled nil)
+;; 主动加载 Dired Mode
+;; (require 'dired)
+;; (defined-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
+
+;; 延迟加载
+(with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
+
+;;----------------------------------------------------------------------------
+;; Quick Jump Through Panels
 ;; winum - config with use-package
-;;-------------------------------------------
+;;----------------------------------------------------------------------------
 (use-package winum
   :ensure t
   :init
@@ -76,5 +113,3 @@
 
 (provide 'init-emacs)
 ;;; init-emacs.el ends here
-
-
