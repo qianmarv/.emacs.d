@@ -14,7 +14,7 @@
   :config
   (progn
     (setq dashboard-banner-logo-title "Welcome to Emacs")
-    (setq dashboard-items '((recents  . 5)
+    (setq dashboard-items '((recents  . 10)
                             (bookmarks . 5)
                             ;; (registers . 5)
                             ;; (agenda . 5)

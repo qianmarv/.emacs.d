@@ -29,7 +29,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Default Theme
-(load-theme 'solarized-dark t)
+(load-theme 'monokai t)
 
 
 ;; Highligh Line
@@ -41,6 +41,11 @@
 ;;----------------------------------------------------------------------------
 (use-package smart-mode-line
   :ensure t)
+
+(use-package spaceline
+  :ensure t
+  :config
+  (spaceline-spacemacs-theme))
 
 ;;----------------------------------------------------------------------------
 ;; emacs-which-key
@@ -104,6 +109,7 @@
 			                                 (define-key map (kbd "M-7") 'winum-select-window-7)
 			                                 (define-key map (kbd "M-8") 'winum-select-window-8)
 			                                 map))
+    (setq winum-auto-setup-mode-line nil)
     (winum-mode)))
 ;; :config
 ;; (progn

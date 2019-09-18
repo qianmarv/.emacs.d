@@ -4,7 +4,7 @@
 
 
 ;; Rebind comment
-(global-set-key (kbd "C-c C-l") 'comment-line)
+;; (global-set-key (kbd "C-c C-l") 'comment-line)
 
 ;;-------------------------------------------
 ;; smartparens - config with use-package
