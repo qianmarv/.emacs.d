@@ -36,6 +36,10 @@
 
 (require 'init-projectile)
 
+(require 'init-org)
+
+;; (require 'init-chinese)
+
 ;;----------------------------------------------------------------------------
 ;; Variables configured via the interactive 'customize' interface
 ;;----------------------------------------------------------------------------

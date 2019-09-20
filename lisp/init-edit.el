@@ -2,9 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
+(setq-default indent-tabs-mode nil)
 
+(setq-default tab-width 4)
 ;; Rebind comment
-;; (global-set-key (kbd "C-c C-l") 'comment-line)
+(global-set-key (kbd "C-x C-l") 'comment-line)
 
 ;;-------------------------------------------
 ;; smartparens - config with use-package
@@ -42,6 +44,17 @@
   (global-undo-tree-mode)
   (setq undo-tree-visualizer-timestamps t)
   (setq undo-tree-visualizer-diff t))
+
+;;TODO Need a separate file for programming language
+(use-package js2-mode
+  :ensure t
+  :config
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+    (add-hook 'js2-mode-hook (lambda ()
+                               (setq-default js2-basic-offset 2)
+                               (setq-default js-indent-level 2)
+                               (js2-imenu-extras-mode)))))
 
 
 (provide 'init-edit)

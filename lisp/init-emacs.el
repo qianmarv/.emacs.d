@@ -20,10 +20,6 @@
 
 (toggle-scroll-bar -1)
 
-(setq-default indent-tabs-mode nil)
-
-(setq-default tab-width 4)
-
 (delete-selection-mode 1)
 
 (fset 'yes-or-no-p 'y-or-n-p)
