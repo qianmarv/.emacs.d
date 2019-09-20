@@ -38,7 +38,7 @@
 
 (require 'init-org)
 
-;; (require 'init-chinese)
+(require 'init-chinese)
 
 ;;----------------------------------------------------------------------------
 ;; Variables configured via the interactive 'customize' interface

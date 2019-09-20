@@ -3,11 +3,49 @@
 ;;; Code:
 
 ;;; Show the clocked-in task - if any - in the header line
-(defun my/show-org-clock-in-header-line ()
+(defun my-org/show-org-clock-in-header-line ()
   (setq-default header-line-format '((" " org-mode-line-string " "))))
 
-(defun my/hide-org-clock-from-header-line ()
+(defun my-org/hide-org-clock-from-header-line ()
   (setq-default header-line-format nil))
+
+(defun my-org/verify-refile-target ()
+  "Exclude todo keywords with a done state from refile targets."
+  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+
+(defun my-org/org-refile-anywhere (&optional goto default-buffer rfloc msg)
+  "A version of `org-refile' which allows refiling to any subtree."
+  (interactive "P")
+  (let ((org-refile-target-verify-function))
+    (org-refile goto default-buffer rfloc msg)))
+
+(defun my-org/org-agenda-refile-anywhere (&optional goto rfloc no-update)
+  "A version of `org-agenda-refile' which allows refiling to any subtree."
+  (interactive "P")
+  (let ((org-refile-target-verify-function))
+    (org-agenda-refile goto rfloc no-update)))
+
+;; Different Apps to Be Called Under Different OS Platform
+;;   Win: Powershell Tool https://github.com/Windos/BurntToast
+(defun my-org/show-alarm (min-to-app new-time message)
+  (cond ((string-equal system-type "windows-nt") (call-process "powershell"
+                                                                nil
+                                                                t
+                                                                nil
+                                                                (format " New-BurntToastNotification -Text '%s' -Sound 'Alarm2' -SnoozeAndDismiss" message)))
+        ((string-equal system-type "gnu/linux") (call-process "notify-send"
+                                                              nil
+                                                              t
+                                                              nil
+                                                              (format "Emacs Alarm: '%s'" message)))))
+
+(defmacro my-org/expand-template (name)
+  "Expand template NAME to full path."
+  (concat my-org/gtd-directory "/templates/" name ".tpl"))
+
+(defun my-org/make-notebook (name)
+  "Make notebook NAME to full path. TODO create the notebook if NOT exist."
+  (concat my-org/gtd-directory "/" name ".org"))
 
 ;; The function defined to adapt same configuration for spacemacs inside package.el
 (defun my-org/post-init-org ()
@@ -196,22 +234,8 @@
       ;; (advice-add 'org-refile :after (lambda (&rest _) (org-save-all-org-buffers)))
 
       ;; Exclude DONE state tasks from refile targets
-      (defun my/verify-refile-target ()
-        "Exclude todo keywords with a done state from refile targets."
-        (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-      (setq org-refile-target-verify-function 'my/verify-refile-target)
 
-      (defun my/org-refile-anywhere (&optional goto default-buffer rfloc msg)
-        "A version of `org-refile' which allows refiling to any subtree."
-        (interactive "P")
-        (let ((org-refile-target-verify-function))
-          (org-refile goto default-buffer rfloc msg)))
-
-      (defun my/org-agenda-refile-anywhere (&optional goto rfloc no-update)
-        "A version of `org-agenda-refile' which allows refiling to any subtree."
-        (interactive "P")
-        (let ((org-refile-target-verify-function))
-          (org-agenda-refile goto rfloc no-update)))
+      (setq org-refile-target-verify-function 'my-org/verify-refile-target)
 
       ;; Targets start with the file name - allows creating level 1 tasks
       ;;(setq org-refile-use-outline-path (quote file))
@@ -239,21 +263,13 @@
       (setq org-crypt-key nil)
 
 
-      (setq my/gtd-directory "~/Org/GTD")
+      (setq my-org/gtd-directory "~/Org/GTD")
 
-      (defmacro my/expand-template (name)
-        "Expand template NAME to full path."
-        (concat my/gtd-directory "/templates/" name ".tpl"))
-
-      (defun my/make-notebook (name)
-        "Make notebook NAME to full path. TODO create the notebook if NOT exist."
-        (concat my/gtd-directory "/" name ".org"))
-
-      (let* ((journal-book (my/make-notebook "Journal"))
-             (inbox-book (my/make-notebook "Inbox"))
-             (capture-book (my/make-notebook "Event"))
-             (agenda-book (my/make-notebook "Agenda"))
-             (project-book (my/make-notebook "Projects")))
+      (let* ((journal-book (my-org/make-notebook "Journal"))
+             (inbox-book (my-org/make-notebook "Inbox"))
+             (capture-book (my-org/make-notebook "Event"))
+             (agenda-book (my-org/make-notebook "Agenda"))
+             (project-book (my-org/make-notebook "Projects")))
 
         (setq org-capture-templates
               `(
@@ -267,21 +283,21 @@
                 ("ci" "Capture Ideas/Mighty new todos" entry
                  (file+headline ,capture-book "Ideas")  "* TODO %?\n %i\n")
                 ("cb" "Books want Read" entry
-                 (file+headline ,capture-book "Books") (file ,(my/expand-template "book")))
+                 (file+headline ,capture-book "Books") (file ,(my-org/expand-template "book")))
                 ("cm" "Movies want Watch" entry
-                 (file+headline ,capture-book "Movies") (file ,(my/expand-template "movie")))
+                 (file+headline ,capture-book "Movies") (file ,(my-org/expand-template "movie")))
                 ("r" "Review")
                 ("rd" "Daily Review"  entry
-                 (file+olp+datetree ,journal-book) (file ,(my/expand-template "daily_review")) :tree-type week :time-prompt t)
+                 (file+olp+datetree ,journal-book) (file ,(my-org/expand-template "daily_review")) :tree-type week :time-prompt t)
                 ("rw" "Weekly Review"  entry
-                 (file+olp+datetree ,journal-book) (file ,(my/expand-template "weekly_review")) :tree-type week :time-prompt t)
+                 (file+olp+datetree ,journal-book) (file ,(my-org/expand-template "weekly_review")) :tree-type week :time-prompt t)
                 ("rm" "Monthly Review"  entry
-                 (file+olp+datetree ,journal-book) (file ,(my/expand-template "monthly_review")) :tree-type week :time-prompt t))))
+                 (file+olp+datetree ,journal-book) (file ,(my-org/expand-template "monthly_review")) :tree-type week :time-prompt t))))
 
 
-      (add-hook 'org-clock-in-hook 'my/show-org-clock-in-header-line)
-      (add-hook 'org-clock-out-hook 'my/hide-org-clock-from-header-line)
-      (add-hook 'org-clock-cancel-hook 'my/hide-org-clock-from-header-line)
+      (add-hook 'org-clock-in-hook 'my-org/show-org-clock-in-header-line)
+      (add-hook 'org-clock-out-hook 'my-org/hide-org-clock-from-header-line)
+      (add-hook 'org-clock-cancel-hook 'my-org/hide-org-clock-from-header-line)
 
       ;; (after-load 'org-clock
       (define-key org-clock-mode-line-map [header-line mouse-2] 'org-clock-goto)
@@ -349,7 +365,7 @@
       (setq org-pandoc-options-for-latex-pdf '((pdf-engine . "xelatex")))
 
       (setq org-agenda-include-diary t
-            diary-file (concat my/gtd-directory "/diary.org")
+            diary-file (concat my-org/gtd-directory "/diary.org")
             org-agenda-diary-file 'diary-file)
       )))
 

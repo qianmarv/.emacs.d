@@ -5,6 +5,8 @@
 (setq-default indent-tabs-mode nil)
 
 (setq-default tab-width 4)
+
+(setq-default fill-column 80)
 ;; Rebind comment
 (global-set-key (kbd "C-x C-l") 'comment-line)
 
