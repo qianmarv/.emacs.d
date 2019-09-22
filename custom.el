@@ -12,7 +12,7 @@
     ("~/Org/GTD/Inbox.org" "~/Org/GTD/Habit.org" "~/Org/GTD/Event.org" "~/Org/GTD/Work.org" "~/Org/GTD/Agenda.org")))
  '(package-selected-packages
    (quote
-    (js2-mode org-super-agenda pyim spaceline spaceline-config smart-mode-line sml all-the-icons use-package monokai-theme solarized-theme))))
+    (htmlize js2-mode org-super-agenda pyim spaceline spaceline-config smart-mode-line sml all-the-icons use-package monokai-theme solarized-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
