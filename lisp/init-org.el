@@ -175,7 +175,7 @@
       (setq org-todo-keywords
             (quote ((sequence "IDEA(i)" "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
                     (sequence "PROJECT(p)" "|" "DONE(d!/!)" "CANCELLED(c@/!)")
-                    (sequence "WAITING(w@/!)" "DELEGATED(e!)" "HOLD(h)" "|" "CANCELLED(c@/!)")))
+                    (sequence "STARTED(s)" "WAITING(w@/!)" "DELEGATED(e!)" "HOLD(h)" "|" "CANCELLED(c@/!)")))
             org-todo-repeat-to-state "TODO")
 
       (setq org-todo-keyword-faces
