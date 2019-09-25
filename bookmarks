@@ -2,9 +2,19 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("org-capture-last-stored"
+(("org-capture-last-stored-marker"
+ (filename . "~/Org/GTD/Work.org")
+ (front-context-string . "*** DONE Evalute")
+ (rear-context-string . "9-24 Tue 17:02]\n")
+ (position . 194915))
+("org-refile-last-stored"
+ (filename . "~/Org/GTD/Work.org")
+ (front-context-string . "*** DONE Evalute")
+ (rear-context-string . "9-24 Tue 17:02]\n")
+ (position . 194915))
+("org-capture-last-stored"
  (filename . "~/Org/GTD/Event.org")
- (front-context-string . "** DONE Call fro")
- (rear-context-string . "-02 Mon 14:40] \n")
- (position . 20258))
+ (front-context-string . "** DONE Evalute ")
+ (rear-context-string . "9-19 Thu 17:33]\n")
+ (position . 21680))
 )

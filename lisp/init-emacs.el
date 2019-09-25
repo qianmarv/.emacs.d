@@ -78,6 +78,18 @@
 (with-eval-after-load 'dired
   (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
 
+
+;;----------------------------------------------------------------------------
+;; Eyebrowse
+;; https://github.com/wasamasa/eyebrowse
+;; winum - config with use-package
+;;----------------------------------------------------------------------------
+(use-package eyebrowse
+  :ensure t
+  :config
+  (progn
+    (eyebrowse-mode)))
+
 ;;----------------------------------------------------------------------------
 ;; Quick Jump Through Panels
 ;; winum - config with use-package

@@ -29,18 +29,26 @@
 
 ;; Different Apps to Be Called Under Different OS Platform
 ;;   Win: Powershell Tool https://github.com/Windos/BurntToast
-(defun my-org/show-alarm (min-to-app new-time message)
-  (cond ((string-equal system-type "windows-nt") (call-process "powershell"
-                                                                nil
-                                                                t
-                                                                nil
-                                                                (format " New-BurntToastNotification -Text '%s' -Sound 'Alarm2' -SnoozeAndDismiss" message)))
-        ((string-equal system-type "gnu/linux") (call-process "notify-send"
-                                                              nil
-                                                              t
-                                                              nil
-                                                              (format "Emacs Alarm: '%s'" message)))))
 
+(defun my-org/show-alarm (min-to-app new-time message)
+  (cond 
+   ((my/is-wsl) (call-process "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+                                  nil
+                                  nil
+                                  nil
+                                  (format " New-BurntToastNotification -Text \"%s\" -Sound 'Alarm2' -SnoozeAndDismiss" message)))       
+   ((my/is-win) (call-process "powershell"
+                                  nil
+                                  nil
+                                  nil
+                                  (format " New-BurntToastNotification -Text \"%s\" -Sound 'Alarm2' -SnoozeAndDismiss" message)))
+   ((my/is-linux) (call-process "notify-send"
+                                    nil
+                                    nil
+                                    nil
+                                    (format "Emacs Alarm: '%s'" message)))))
+
+(setq my-org/gtd-directory "~/Org/GTD")
 (defmacro my-org/expand-template (name)
   "Expand template NAME to full path."
   (concat my-org/gtd-directory "/templates/" name ".tpl"))
@@ -264,9 +272,6 @@
       ;; (setq org-crypt-key "AC88F93004D199BC")
       (setq org-crypt-key nil)
 
-
-      (setq my-org/gtd-directory "~/Org/GTD")
-
       (let* ((journal-book (my-org/make-notebook "Journal"))
              (inbox-book (my-org/make-notebook "Inbox"))
              (capture-book (my-org/make-notebook "Event"))
@@ -276,7 +281,7 @@
         (setq org-capture-templates
               `(
                 ("j" "Journals, Morning Write" entry
-                 (file+olp+datetree ,journal-book) "* Morning Write\n%U\n%?" :tree-type week)
+                 (file+olp+datetree ,journal-book) "* Morning Write\n\t%T\n%?" :tree-type week)
                 ("b" "Break / Interrupt" entry
                  (file+headline ,capture-book "Other Interrupts") "* DONE %?\n%U %i\n" :clock-in t :clock-resume t)
                 ("c" "Collect/Capture")
@@ -357,7 +362,20 @@
                :publishing-directory "~/Git/blog/source/_posts/"
                :recursive t
                :publishing-function org-publish-attachment)
-              ("Blog" :components ("Blog-Note" "Blog-Static"))))
+              ("Blog" :components ("Blog-Note" "Blog-Static"))
+              ;; ("Work-Note"
+              ;;  :base-directory "~/Org/Project/CCONSSHA02"
+              ;;  :recursive t
+              ;;  :publishing-directory "~/Git/"
+              ;;  :publishing-function org-md-publish-to-md)
+              ;; ("Blog-Static"
+              ;;  :base-directory "~/Org/Blog/"
+              ;;  :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+              ;;  :publishing-directory "~/Git/blog/source/_posts/"
+              ;;  :recursive t
+              ;;  :publishing-function org-publish-attachment)
+              ;; ("Blog" :components ("Blog-Note" "Blog-Static"))              
+              ))
 
       ;; Publish with
       ;; (org-publish-current-project) ;; While having a file in your project open

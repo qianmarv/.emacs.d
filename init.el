@@ -24,6 +24,8 @@
 ;;----------------------------------------------------------------------------
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
+(require 'init-util)
+
 (require 'init-elpa)      ;; Machinery for installing required packages
 
 (require 'init-dashboard)
