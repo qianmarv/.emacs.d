@@ -30,6 +30,35 @@
 ;; Different Apps to Be Called Under Different OS Platform
 ;;   Win: Powershell Tool https://github.com/Windos/BurntToast
 
+(defun my-org/insert-screenshot ()
+  "Take a screenshot into a time stamped unique-named file in the
+same directory as the org-buffer and insert a link to this file."
+  (interactive)
+  ;; (org-display-inline-images)
+  (let*
+      ;; foldername (replace-regexp-in-string "\.org" "" (buffer-file-name))
+      ((image-folder "IMG")
+       (image-name (format-time-string "%Y%m%d_%H%M%S.png"))
+       (parent-directory (file-name-directory (buffer-file-name)))
+       ;; subfolder (replace-regexp-in-string "\.org" "" (file-name-nondirectory (buffer-file-name)))
+       (relative-image-path  (concat image-folder "/" image-name))
+       (full-image-directory (concat parent-directory image-folder))
+       (full-image-path (concat full-image-directory "/" image-name)))
+    (if (not (file-exists-p full-image-directory))
+        (mkdir full-image-directory))
+    ;;convert bitmap from clipboard to file
+    ;;https://imagemagick.org/script/download.php
+    (cond ((when (my/is-win) (call-process "magick" nil nil nil  "clipboard:" full-image-path))
+           (when (my/is-wsl) (call-process "magick.exe" nil nil nil "clipboard:" full-image-path))))
+
+    ;; insert into file if correctly taken
+    (if (file-exists-p full-image-path)
+        (progn
+          (insert (message "#+CAPTION: %s" (read-from-minibuffer "Caption: ")))
+          (indent-new-comment-line)
+          (insert (message "[[./%s/%s]]" image-folder image-name)))
+      (message "Image processing failed for %s" full-image-path))))
+
 (defun my-org/show-alarm (min-to-app new-time message)
   (cond 
    ((my/is-wsl) (call-process "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
@@ -60,8 +89,6 @@
 ;; The function defined to adapt same configuration for spacemacs inside package.el
 (defun my-org/post-init-org ()
   (add-hook 'org-mode-hook (lambda ()
-                             ;; (spacemacs/toggle-line-numbers-off)
-                             ;; (spacemacs/toggle-auto-fill-mode-off)
                              (add-hook 'before-save-hook 'time-stamp)) 'append)
 
   (with-eval-after-load 'org
@@ -79,6 +106,7 @@
       ;; (add-to-list 'org-modules 'org-habit)
       (require 'org-habit)
 
+      (auto-fill-mode)
       (visual-line-mode)
 
       ;; Enable publish taskjuggler
@@ -256,21 +284,24 @@
       (setq org-refile-allow-creating-parent-nodes 'confirm)
 
 
-      (setq org-enable-priority-commands nil)
+      ;; (setq org-enable-priority-commands t)
       ;; --------------------------------------------------------------------
       ;; Encypting files or org
       ;; https://orgmode.org/worg/org-tutorials/encrypting-files.html
+      ;; Below solve error: signing failed: Inappropriate ioctl for device 
+      ;; https://d.sb/2016/11/gpg-inappropriate-ioctl-for-device-errors
       ;; --------------------------------------------------------------------
-      ;; (require 'epa-file)
+      (require 'epa-file)
       (epa-file-enable)
+      (setq epa-file-select-keys nil) 
       (require 'org-crypt)
       (org-crypt-use-before-save-magic)
       (setq org-tags-exclude-from-inheritance (quote ("crypt")))
       ;; GPG key to use for encryption
       ;; Either the Key ID or set to nil to use symmetric encryption.
       ;; 
-      ;; (setq org-crypt-key "AC88F93004D199BC")
-      (setq org-crypt-key nil)
+      (setq org-crypt-key "AC88F93004D199BC")
+      ;; (setq org-crypt-key nil)
 
       (let* ((journal-book (my-org/make-notebook "Journal"))
              (inbox-book (my-org/make-notebook "Inbox"))
@@ -281,7 +312,7 @@
         (setq org-capture-templates
               `(
                 ("j" "Journals, Morning Write" entry
-                 (file+olp+datetree ,journal-book) "* Morning Write\n\t%T\n%?" :tree-type week)
+                 (file+olp+datetree ,journal-book) "* Morning Write\n\t%U\n%?" :tree-type week)
                 ("b" "Break / Interrupt" entry
                  (file+headline ,capture-book "Other Interrupts") "* DONE %?\n%U %i\n" :clock-in t :clock-resume t)
                 ("c" "Collect/Capture")
@@ -302,8 +333,21 @@
                  (file+olp+datetree ,journal-book) (file ,(my-org/expand-template "monthly_review")) :tree-type week :time-prompt t))))
 
 
-      (add-hook 'org-clock-in-hook 'my-org/show-org-clock-in-header-line)
-      (add-hook 'org-clock-out-hook 'my-org/hide-org-clock-from-header-line)
+      ;; TODO Group hook functions together
+      (add-hook 'org-clock-in-hook '(lambda ()
+                                      (org-todo "STARTED")
+                                      (my-org/show-org-clock-in-header-line)))
+      
+      ;;TODO Only Change STATE when currently state is not in Finish State
+      ;; (org-get-todo-state)
+      (add-hook 'org-clock-out-hook '(lambda ()
+                                       (let ((curr-state (org-get-todo-state)))
+                                         ;; (when (string= curr-state "DONE")
+                                         ;;   (org-priority 'remove))
+                                         (when (string= curr-state "STARTED")
+                                           (org-todo "NEXT")))
+                                       (my-org/hide-org-clock-from-header-line)))
+      
       (add-hook 'org-clock-cancel-hook 'my-org/hide-org-clock-from-header-line)
 
       ;; (after-load 'org-clock
@@ -349,24 +393,14 @@
       ;;           (lambda ()
       ;;             (my-org/show-alarm 0 0 "Pomodoro Killed - One does not simply kill a pomodoro!")))
       ;; Setup Publish
+      (require 'ox-publish)
       (setq org-publish-project-alist
             `(
-              ("Blog-Note"
-               :base-directory "~/Org/Blog/"
-               :recursive t
-               :publishing-directory "~/Git/blog/source/_posts/"
-               :publishing-function org-md-publish-to-md)
-              ("Blog-Static"
-               :base-directory "~/Org/Blog/"
-               :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-               :publishing-directory "~/Git/blog/source/_posts/"
-               :recursive t
-               :publishing-function org-publish-attachment)
-              ("Blog" :components ("Blog-Note" "Blog-Static"))
-              ;; ("Work-Note"
-              ;;  :base-directory "~/Org/Project/CCONSSHA02"
+              ;; Project Settings for Blog 
+              ;; ("Blog-Note"
+              ;;  :base-directory "~/Org/Blog/"
               ;;  :recursive t
-              ;;  :publishing-directory "~/Git/"
+              ;;  :publishing-directory "~/Git/blog/source/_posts/"
               ;;  :publishing-function org-md-publish-to-md)
               ;; ("Blog-Static"
               ;;  :base-directory "~/Org/Blog/"
@@ -374,7 +408,61 @@
               ;;  :publishing-directory "~/Git/blog/source/_posts/"
               ;;  :recursive t
               ;;  :publishing-function org-publish-attachment)
-              ;; ("Blog" :components ("Blog-Note" "Blog-Static"))              
+              ;; ("Blog" :components ("Blog-Note" "Blog-Static"))
+              
+              ;; Project Setting for Project - Total Validation
+              ("TotalValidation-html"
+               :base-directory "~/Org/Project/CCONSSHA02/TotalValidation"
+               :recursive t
+               :with-properties t
+               :publishing-directory "~/Git/TotalValidation/docs"
+               :publishing-function org-html-publish-to-html)
+              ("TotalValidation-Static"
+               :base-directory "~/Org/Project/CCONSSHA02/TotalValidation/IMG"
+               :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+               :publishing-directory "~/Git/TotalValidation/docs/IMG"
+               :recursive t
+               :publishing-function org-publish-attachment)
+              ("TotalValidation-Org"
+               :base-directory "~/Org/Project/CCONSSHA02/TotalValidation/"
+               :base-extension "org"
+               :publishing-directory "~/Git/TotalValidation/source/"
+               :recursive t
+               :publishing-function org-org-publish-to-org)              
+              ("TotalValidation" :components ("TotalValidation-html" "TotalValidation-Static" "TotalValidation-Org"))
+              ;; Project Settings for Project - Inter Company
+              ("InterCompanyHub-html"
+               :base-directory "~/Org/Project/CCONSSHA02/InterCompanyHub"
+               :recursive t
+               :with-properties t
+               :publishing-directory "~/Git/InterCompanyHub/docs"
+               :publishing-function org-html-publish-to-html)
+              ("InterCompanyHub-Static"
+               :base-directory "~/Org/Project/CCONSSHA02/InterCompanyHub/IMG"
+               :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+               :publishing-directory "~/Git/InterCompanyHub/docs/IMG"
+               :recursive t
+               :publishing-function org-publish-attachment)
+              ("InterCompanyHub-Org"
+               :base-directory "~/Org/Project/CCONSSHA02/InterCompanyHub/"
+               :base-extension "org"
+               :publishing-directory "~/Git/InterCompanyHub/source/"
+               :recursive t
+               :publishing-function org-org-publish-to-org)              
+              ("InterCompanyHub" :components ("InterCompanyHub-html" "InterCompanyHub-Static" "InterCompanyHub-Org"))
+              ("2002CE-SUBVAL-Org"
+               :base-directory "~/Org/Project/CCONSSHA02/2002CE_SUBVAL"
+               :recursive t
+               :with-properties t
+               :publishing-directory "~/Git/2002CE_SubVal"
+               :publishing-function org-html-publish-to-html)
+              ("2002CE-SUBVAL-Static"
+               :base-directory "~/Org/Project/CCONSSHA02/2002CE_SUBVAL/IMG"
+               :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+               :publishing-directory "~/Git/2002CE_SubVal/IMG"
+               :recursive t
+               :publishing-function org-publish-attachment)
+              ("2002CE-SUBVAL" :components ("2002CE-SUBVAL-Org" "2002CE-SUBVAL-Static"))              
               ))
 
       ;; Publish with
@@ -402,11 +490,13 @@
   (setq org-super-agenda-groups
         '((:name "Log "
                  :log t)
+          (:name "Schedule "
+                 :time-grid t)          
           (:name "Current Focus "
                  :todo "STARTED")
-          (:name "Schedule "
-                 :time-grid t)
-          (:name "Today "
+          (:name "Next"
+                 :todo "NEXT")          
+          (:name "Scheduled Today "
                  :scheduled today)
           (:name "Habits "
                  :habit t)

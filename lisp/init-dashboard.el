@@ -13,7 +13,7 @@
   :ensure t
   :config
   (progn
-    (setq dashboard-banner-logo-title "Welcome to Emacs")
+    (setq dashboard-banner-logo-title "Stay Hungry, Stay Foolish!")
     (setq dashboard-items '((recents  . 10)
                             (bookmarks . 5)
                             ;; (registers . 5)

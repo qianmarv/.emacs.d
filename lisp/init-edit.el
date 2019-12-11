@@ -59,5 +59,21 @@
                                (js2-imenu-extras-mode)))))
 
 
+;; SAP ABAP Related
+;;(use-package quelpa-use-package
+;;  :ensure t)
+;;(use-package request
+;;  :ensure t)
+;;(use-package xml
+;;  :ensure t)
+;;(use-package abap
+;;  :quelpa
+;;  (abap :repo "qianmarv/sap-abap-mode" :fetcher github :version original))
+
+;;(use-package abap-mode
+;;  :mode ("\\.abap\\'" . abap-mode)
+;;  :quelpa
+;;  (abap-mode :repo "qianmarv/ABAPInEmacs" :fetcher github :version original))
+
 (provide 'init-edit)
 ;;; init-edit.el ends here

@@ -6,7 +6,7 @@
 ;; Personal Information
 ;;----------------------------------------------------------------------------
 (setq user-full-name "Marvin Qian")
-(setq user-mail-address "qianmarv@gmail.com")
+(setq user-mail-address "qantas18@gmail.com")
 
 
 ;;----------------------------------------------------------------------------
@@ -18,7 +18,15 @@
 
 (menu-bar-mode -1)
 
-(toggle-scroll-bar -1)
+;;----------------------------------------------------------------------------
+;; https://emacs.stackexchange.com/questions/23773/disable-scrollbar-on-new-frame
+;;----------------------------------------------------------------------------
+;; (toggle-scroll-bar -1)
+(defun my/disable-scroll-bars (frame)
+  (modify-frame-parameters frame
+                           '((vertical-scroll-bars . nil)
+                             (horizontal-scroll-bars . nil))))
+(add-hook 'after-make-frame-functions 'my/disable-scroll-bars)
 
 (delete-selection-mode 1)
 

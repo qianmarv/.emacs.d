@@ -4,17 +4,17 @@
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-capture-last-stored-marker"
  (filename . "~/Org/GTD/Work.org")
- (front-context-string . "*** DONE Evalute")
- (rear-context-string . "9-24 Tue 17:02]\n")
- (position . 194915))
+ (front-context-string . "*** NEXT Check w")
+ (rear-context-string . " 0:31\n    :END:\n")
+ (position . 250958))
 ("org-refile-last-stored"
  (filename . "~/Org/GTD/Work.org")
- (front-context-string . "*** DONE Evalute")
- (rear-context-string . "9-24 Tue 17:02]\n")
- (position . 194915))
+ (front-context-string . "*** NEXT Check w")
+ (rear-context-string . " 0:31\n    :END:\n")
+ (position . 250958))
 ("org-capture-last-stored"
- (filename . "~/Org/GTD/Event.org")
- (front-context-string . "** DONE Evalute ")
- (rear-context-string . "9-19 Thu 17:33]\n")
- (position . 21680))
+ (filename . "~/Org/GTD/Journal.org")
+ (front-context-string . "**** Morning Wri")
+ (rear-context-string . "9-12-10 Tuesday\n")
+ (position . 82947))
 )
