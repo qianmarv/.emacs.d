@@ -15,15 +15,15 @@
 (setq package-check-signature nil)
 
 (require 'package)
-(setq package-archives
-     '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
-		("org-cn"   . "https://elpa.emacs-china.org/org/")
-		("gnu-cn"   . "https://elpa.emacs-china.org/gnu/")))
+
+(setq package-archives '(("gnu"    . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
+                         ("nongnu" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/nongnu/")
+                         ("melpa"  . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
 
 ;; Alternative: Don't Delete Below - Used for Non-China Mirrors
 ;; (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ;; ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ;; ("melpa" . "https://melpa.org/packages/")))
+;; ("marmalade" . "https://marmalade-repo.org/packages/")
+;; ("melpa" . "https://melpa.org/packages/")))
 
 (setq package-enable-at-startup nil)
 
@@ -31,16 +31,16 @@
 
 ;; Init Required Packages
 (defvar base-packages '(
-			            solarized-theme
+			solarized-theme
                         monokai-theme
- 					    use-package ))
+ 			use-package ))
 
 (defun my/install-missing-packages(package-list)
   (dolist (p package-list)
- 	(unless (package-installed-p p)
- 	  (package-refresh-contents)
+    (unless (package-installed-p p)
+      (package-refresh-contents)
       (package-install p))
- 	(add-to-list 'package-selected-packages p)))
+    (add-to-list 'package-selected-packages p)))
 
 (my/install-missing-packages base-packages)
 

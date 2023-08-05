@@ -4,15 +4,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   (quote
-    ("d91ef4e714f05fff2070da7ca452980999f5361209e679ee988e3c432df24347" "0598c6a29e13e7112cfbc2f523e31927ab7dce56ebb2016b567e1eff6dc1fd4f" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a2cde79e4cc8dc9a03e7d9a42fabf8928720d420034b66aecc5b665bbf05d4e9" default)))
- '(default-input-method "pyim")
+   '("fee7287586b17efbfda432f05539b58e86e059e78006ce9237b8732fde991b4c" "37c8c2817010e59734fe1f9302a7e6a2b5e8cc648cf6a6cc8b85f3bf17fececf" default))
  '(org-agenda-files
-   (quote
-    ("~/Org/GTD/Habit.org" "~/Org/GTD/Event.org" "~/Org/GTD/Work.org" "~/Org/GTD/Agenda.org")))
- '(package-selected-packages
-   (quote
-    (request abap-mode abap quelpa-use-package eyebrowse htmlize js2-mode org-super-agenda pyim spaceline spaceline-config smart-mode-line sml all-the-icons use-package monokai-theme solarized-theme))))
+   '("~/Org/GTD/Work.org" "/home/marvin/Org/GTD/Project.org" "/home/marvin/Org/GTD/Habit.org" "/home/marvin/Org/GTD/Event.org" "/home/marvin/Org/GTD/Agenda.org"))
+ '(package-selected-packages '(org-superstar monokai-theme solarized-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

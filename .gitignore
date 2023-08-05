@@ -9,7 +9,10 @@
 
 # Undo-tree save-files
 *.~undo-tree
+#recentf#
 
+newsticker/
+quelpa/
 elpa-*/
 projectile-bookmarks.eld
 recentf
@@ -18,3 +21,4 @@ url/
 pyim/
 .org-id-locations
 eshell/
+org-clock-save.el

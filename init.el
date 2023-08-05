@@ -28,6 +28,8 @@
 
 (require 'init-elpa)      ;; Machinery for installing required packages
 
+(require 'init-ui)
+
 (require 'init-dashboard)
 
 (require 'init-ivy)
@@ -40,7 +42,7 @@
 
 (require 'init-org)
 
-(require 'init-chinese)
+;; (require 'init-chinese)
 
 ;;----------------------------------------------------------------------------
 ;; Variables configured via the interactive 'customize' interface

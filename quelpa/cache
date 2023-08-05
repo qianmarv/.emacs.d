@@ -1,1 +1,0 @@
-((abap :repo "qianmarv/sap-abap-mode" :fetcher github :version original) (abap-mode :repo "qianmarv/ABAPInEmacs" :fetcher github :version original))

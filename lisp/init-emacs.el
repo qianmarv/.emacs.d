@@ -19,6 +19,11 @@
 (menu-bar-mode -1)
 
 ;;----------------------------------------------------------------------------
+;;https://emacs.stackexchange.com/questions/19713/how-change-the-storage-location-of-recentf-file#:~:text=You%20can%20set%20it%20with,%28setq%20recentf-save-file%20%28expand-file-name%20%22recentf%22%20%3Cother-directory%3E%29%29
+;;----------------------------------------------------------------------------
+(setq recentf-save-file (expand-file-name "recentf" <other-directory>))
+
+;;----------------------------------------------------------------------------
 ;; https://emacs.stackexchange.com/questions/23773/disable-scrollbar-on-new-frame
 ;;----------------------------------------------------------------------------
 ;; (toggle-scroll-bar -1)
@@ -32,24 +37,6 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; Default Theme
-(load-theme 'monokai t)
-
-
-;; Highligh Line
-(global-hl-line-mode 1)
-
-;;----------------------------------------------------------------------------
-;; Powerline
-;; TODO move to init-ui.el or somewhere else
-;;----------------------------------------------------------------------------
-(use-package smart-mode-line
-  :ensure t)
-
-(use-package spaceline
-  :ensure t
-  :config
-  (spaceline-spacemacs-theme))
 
 ;;----------------------------------------------------------------------------
 ;; emacs-which-key
@@ -71,6 +58,7 @@
 (add-hook 'after-init-hook 'recentf-mode)
 (setq-default
  recentf-max-saved-items 100
+ recentf-save-file (expand-file-name "recentf" (concat user-emacs-directory "local/"))
  recentf-exclude '("/tmp/" "/ssh:"))
 
 ;;----------------------------------------------------------------------------
@@ -114,7 +102,7 @@
           winum-ignored-buffers            '(" *which-key*")
           winum-keymap                     (let ((map (make-sparse-keymap)))
 			                                 (define-key map (kbd "C-`") 'winum-select-window-by-number)
-			                                 (define-key map (kbd "C-²") 'winum-select-window-by-number)
+ 			                                 (define-key map (kbd "C-²") 'winum-select-window-by-number)
 			                                 (define-key map (kbd "M-0") 'winum-select-window-0-or-10)
 			                                 (define-key map (kbd "M-1") 'winum-select-window-1)
 			                                 (define-key map (kbd "M-2") 'winum-select-window-2)

@@ -27,56 +27,6 @@
   (let ((org-refile-target-verify-function))
     (org-agenda-refile goto rfloc no-update)))
 
-;; Different Apps to Be Called Under Different OS Platform
-;;   Win: Powershell Tool https://github.com/Windos/BurntToast
-
-(defun my-org/insert-screenshot ()
-  "Take a screenshot into a time stamped unique-named file in the
-same directory as the org-buffer and insert a link to this file."
-  (interactive)
-  ;; (org-display-inline-images)
-  (let*
-      ;; foldername (replace-regexp-in-string "\.org" "" (buffer-file-name))
-      ((image-folder "IMG")
-       (image-name (format-time-string "%Y%m%d_%H%M%S.png"))
-       (parent-directory (file-name-directory (buffer-file-name)))
-       ;; subfolder (replace-regexp-in-string "\.org" "" (file-name-nondirectory (buffer-file-name)))
-       (relative-image-path  (concat image-folder "/" image-name))
-       (full-image-directory (concat parent-directory image-folder))
-       (full-image-path (concat full-image-directory "/" image-name)))
-    (if (not (file-exists-p full-image-directory))
-        (mkdir full-image-directory))
-    ;;convert bitmap from clipboard to file
-    ;;https://imagemagick.org/script/download.php
-    (cond ((when (my/is-win) (call-process "magick" nil nil nil  "clipboard:" full-image-path))
-           (when (my/is-wsl) (call-process "magick.exe" nil nil nil "clipboard:" full-image-path))))
-
-    ;; insert into file if correctly taken
-    (if (file-exists-p full-image-path)
-        (progn
-          (insert (message "#+CAPTION: %s" (read-from-minibuffer "Caption: ")))
-          (indent-new-comment-line)
-          (insert (message "[[./%s/%s]]" image-folder image-name)))
-      (message "Image processing failed for %s" full-image-path))))
-
-(defun my-org/show-alarm (min-to-app new-time message)
-  (cond 
-   ((my/is-wsl) (call-process "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
-                                  nil
-                                  nil
-                                  nil
-                                  (format " New-BurntToastNotification -Text \"%s\" -Sound 'Alarm2' -SnoozeAndDismiss" message)))       
-   ((my/is-win) (call-process "powershell"
-                                  nil
-                                  nil
-                                  nil
-                                  (format " New-BurntToastNotification -Text \"%s\" -Sound 'Alarm2' -SnoozeAndDismiss" message)))
-   ((my/is-linux) (call-process "notify-send"
-                                    nil
-                                    nil
-                                    nil
-                                    (format "Emacs Alarm: '%s'" message)))))
-
 (setq my-org/gtd-directory "~/Org/GTD")
 (defmacro my-org/expand-template (name)
   "Expand template NAME to full path."
@@ -111,44 +61,44 @@ same directory as the org-buffer and insert a link to this file."
 
       ;; Enable publish taskjuggler
       ;; https://orgmode.org/worg/exporters/taskjuggler/ox-taskjuggler.html
-;;       (require 'ox-taskjuggler)
+      ;;       (require 'ox-taskjuggler)
 
-;;       (setq org-taskjuggler-reports-directory "~/Org/TaskJuggler/reports")
-;;       ;;https://hugoideler.com/2018/09/org-mode-and-wide-taskjuggler-html-export/
-;;       (setq org-taskjuggler-default-reports
-;;             '("textreport report \"Plan\" {
-;;   formats html
-;;   header '== %title =='
-;;   center -8<-
-;;     [#Plan Plan] | [#Resource_Allocation Resource Allocation]
-;;     ----
-;;     === Plan ===
-;;     <[report id=\"plan\"]>
-;;     ----
-;;     === Resource Allocation ===
-;;     <[report id=\"resourceGraph\"]>
-;;   ->8-
-;; }
-;; # A traditional Gantt chart with a project overview.
-;; taskreport plan \"\" {
-;;   headline \"Project Plan\"
-;;   columns bsi, name, start, end, resources, complete, effort, effortdone, effortleft, chart { width 1000 }
-;;   loadunit shortauto
-;;   hideresource 1
-;; }
-;; # A graph showing resource allocation. It identifies whether each
-;; # resource is under- or over-allocated for.
-;; resourcereport resourceGraph \"\" {
-;;   headline \"Resource Allocation Graph\"
-;;   columns no, name, effort, weekly { width 1000 }
-;;   loadunit shortauto
-;;   hidetask ~(isleaf() & isleaf_())
-;;   sorttasks plan.start.up
-;; }"))
+      ;;       (setq org-taskjuggler-reports-directory "~/Org/TaskJuggler/reports")
+      ;;       ;;https://hugoideler.com/2018/09/org-mode-and-wide-taskjuggler-html-export/
+      ;;       (setq org-taskjuggler-default-reports
+      ;;             '("textreport report \"Plan\" {
+      ;;   formats html
+      ;;   header '== %title =='
+      ;;   center -8<-
+      ;;     [#Plan Plan] | [#Resource_Allocation Resource Allocation]
+      ;;     ----
+      ;;     === Plan ===
+      ;;     <[report id=\"plan\"]>
+      ;;     ----
+      ;;     === Resource Allocation ===
+      ;;     <[report id=\"resourceGraph\"]>
+      ;;   ->8-
+      ;; }
+      ;; # A traditional Gantt chart with a project overview.
+      ;; taskreport plan \"\" {
+      ;;   headline \"Project Plan\"
+      ;;   columns bsi, name, start, end, resources, complete, effort, effortdone, effortleft, chart { width 1000 }
+      ;;   loadunit shortauto
+      ;;   hideresource 1
+      ;; }
+      ;; # A graph showing resource allocation. It identifies whether each
+      ;; # resource is under- or over-allocated for.
+      ;; resourcereport resourceGraph \"\" {
+      ;;   headline \"Resource Allocation Graph\"
+      ;;   columns no, name, effort, weekly { width 1000 }
+      ;;   loadunit shortauto
+      ;;   hidetask ~(isleaf() & isleaf_())
+      ;;   sorttasks plan.start.up
+      ;; }"))
 
-;;       (setq org-taskjuggler-valid-task-attributes '(account start note duration endbuffer endcredit end flags journalentry length limits maxend maxstart minend minstart period reference responsible scheduling startbuffer startcredit statusnote chargeset charge priority))
+      ;;       (setq org-taskjuggler-valid-task-attributes '(account start note duration endbuffer endcredit end flags journalentry length limits maxend maxstart minend minstart period reference responsible scheduling startbuffer startcredit statusnote chargeset charge priority))
 
-;;       (setq org-taskjuggler-valid-resource-attributes '(limits vacation shift booking efficiency journalentry rate workinghours flags leaves))
+      ;;       (setq org-taskjuggler-valid-resource-attributes '(limits vacation shift booking efficiency journalentry rate workinghours flags leaves))
       ;; Resume Clocking Task On Clock-in If The Clock Is Open
       (setq org-clock-in-resume t)
 
@@ -362,13 +312,13 @@ same directory as the org-buffer and insert a link to this file."
       ;; Re-align tags when window shape changes
       (add-hook 'org-agenda-mode-hook
                 (lambda () (add-hook 'window-configuration-change-hook 'org-agenda-align-tags nil t)))
-      ;; --------------------------------------------------------------------
-      ;; Settings for Reminder - appt
-      ;; Refer to: https://emacs.stackexchange.com/questions/3844/good-methods-for-setting-up-alarms-audio-visual-triggered-by-org-mode-events
-      ;; --------------------------------------------------------------------
+      ;; ;; --------------------------------------------------------------------
+      ;; ;; Settings for Reminder - appt
+      ;; ;; Refer to: https://emacs.stackexchange.com/questions/3844/good-methods-for-setting-up-alarms-audio-visual-triggered-by-org-mode-events
+      ;; ;; --------------------------------------------------------------------
 
-      (setq org-show-notification-handler
-            (lambda (msg) (my-org/show-alarm nil nil msg)))
+      ;; (setq org-show-notification-handler
+      ;;       (lambda (msg) (my-org/show-alarm nil nil msg)))
 
 
       ;; (setq appt-disp-window-function 'my-org/show-alarm)
@@ -394,76 +344,76 @@ same directory as the org-buffer and insert a link to this file."
       ;;             (my-org/show-alarm 0 0 "Pomodoro Killed - One does not simply kill a pomodoro!")))
       ;; Setup Publish
       (require 'ox-publish)
-      (setq org-publish-project-alist
-            `(
-              ;; Project Settings for Blog 
-              ;; ("Blog-Note"
-              ;;  :base-directory "~/Org/Blog/"
-              ;;  :recursive t
-              ;;  :publishing-directory "~/Git/blog/source/_posts/"
-              ;;  :publishing-function org-md-publish-to-md)
-              ;; ("Blog-Static"
-              ;;  :base-directory "~/Org/Blog/"
-              ;;  :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-              ;;  :publishing-directory "~/Git/blog/source/_posts/"
-              ;;  :recursive t
-              ;;  :publishing-function org-publish-attachment)
-              ;; ("Blog" :components ("Blog-Note" "Blog-Static"))
-              
-              ;; Project Setting for Project - Total Validation
-              ("TotalValidation-html"
-               :base-directory "~/Org/Project/CCONSSHA02/TotalValidation"
-               :recursive t
-               :with-properties t
-               :publishing-directory "~/Git/TotalValidation/docs"
-               :publishing-function org-html-publish-to-html)
-              ("TotalValidation-Static"
-               :base-directory "~/Org/Project/CCONSSHA02/TotalValidation/IMG"
-               :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-               :publishing-directory "~/Git/TotalValidation/docs/IMG"
-               :recursive t
-               :publishing-function org-publish-attachment)
-              ("TotalValidation-Org"
-               :base-directory "~/Org/Project/CCONSSHA02/TotalValidation/"
-               :base-extension "org"
-               :publishing-directory "~/Git/TotalValidation/source/"
-               :recursive t
-               :publishing-function org-org-publish-to-org)              
-              ("TotalValidation" :components ("TotalValidation-html" "TotalValidation-Static" "TotalValidation-Org"))
-              ;; Project Settings for Project - Inter Company
-              ("InterCompanyHub-html"
-               :base-directory "~/Org/Project/CCONSSHA02/InterCompanyHub"
-               :recursive t
-               :with-properties t
-               :publishing-directory "~/Git/InterCompanyHub/docs"
-               :publishing-function org-html-publish-to-html)
-              ("InterCompanyHub-Static"
-               :base-directory "~/Org/Project/CCONSSHA02/InterCompanyHub/IMG"
-               :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-               :publishing-directory "~/Git/InterCompanyHub/docs/IMG"
-               :recursive t
-               :publishing-function org-publish-attachment)
-              ("InterCompanyHub-Org"
-               :base-directory "~/Org/Project/CCONSSHA02/InterCompanyHub/"
-               :base-extension "org"
-               :publishing-directory "~/Git/InterCompanyHub/source/"
-               :recursive t
-               :publishing-function org-org-publish-to-org)              
-              ("InterCompanyHub" :components ("InterCompanyHub-html" "InterCompanyHub-Static" "InterCompanyHub-Org"))
-              ("2002CE-SUBVAL-Org"
-               :base-directory "~/Org/Project/CCONSSHA02/2002CE_SUBVAL"
-               :recursive t
-               :with-properties t
-               :publishing-directory "~/Git/2002CE_SubVal"
-               :publishing-function org-html-publish-to-html)
-              ("2002CE-SUBVAL-Static"
-               :base-directory "~/Org/Project/CCONSSHA02/2002CE_SUBVAL/IMG"
-               :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-               :publishing-directory "~/Git/2002CE_SubVal/IMG"
-               :recursive t
-               :publishing-function org-publish-attachment)
-              ("2002CE-SUBVAL" :components ("2002CE-SUBVAL-Org" "2002CE-SUBVAL-Static"))              
-              ))
+      ;; (setq org-publish-project-alist
+      ;;       `(
+      ;;         ;; Project Settings for Blog 
+      ;;         ;; ("Blog-Note"
+      ;;         ;;  :base-directory "~/Org/Blog/"
+      ;;         ;;  :recursive t
+      ;;         ;;  :publishing-directory "~/Git/blog/source/_posts/"
+      ;;         ;;  :publishing-function org-md-publish-to-md)
+      ;;         ;; ("Blog-Static"
+      ;;         ;;  :base-directory "~/Org/Blog/"
+      ;;         ;;  :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+      ;;         ;;  :publishing-directory "~/Git/blog/source/_posts/"
+      ;;         ;;  :recursive t
+      ;;         ;;  :publishing-function org-publish-attachment)
+      ;;         ;; ("Blog" :components ("Blog-Note" "Blog-Static"))
+      
+      ;;         ;; Project Setting for Project - Total Validation
+      ;;         ("TotalValidation-html"
+      ;;          :base-directory "~/Org/Project/CCONSSHA02/TotalValidation"
+      ;;          :recursive t
+      ;;          :with-properties t
+      ;;          :publishing-directory "~/Git/TotalValidation/docs"
+      ;;          :publishing-function org-html-publish-to-html)
+      ;;         ("TotalValidation-Static"
+      ;;          :base-directory "~/Org/Project/CCONSSHA02/TotalValidation/IMG"
+      ;;          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+      ;;          :publishing-directory "~/Git/TotalValidation/docs/IMG"
+      ;;          :recursive t
+      ;;          :publishing-function org-publish-attachment)
+      ;;         ("TotalValidation-Org"
+      ;;          :base-directory "~/Org/Project/CCONSSHA02/TotalValidation/"
+      ;;          :base-extension "org"
+      ;;          :publishing-directory "~/Git/TotalValidation/source/"
+      ;;          :recursive t
+      ;;          :publishing-function org-org-publish-to-org)              
+      ;;         ("TotalValidation" :components ("TotalValidation-html" "TotalValidation-Static" "TotalValidation-Org"))
+      ;;         ;; Project Settings for Project - Inter Company
+      ;;         ("InterCompanyHub-html"
+      ;;          :base-directory "~/Org/Project/CCONSSHA02/InterCompanyHub"
+      ;;          :recursive t
+      ;;          :with-properties t
+      ;;          :publishing-directory "~/Git/InterCompanyHub/docs"
+      ;;          :publishing-function org-html-publish-to-html)
+      ;;         ("InterCompanyHub-Static"
+      ;;          :base-directory "~/Org/Project/CCONSSHA02/InterCompanyHub/IMG"
+      ;;          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+      ;;          :publishing-directory "~/Git/InterCompanyHub/docs/IMG"
+      ;;          :recursive t
+      ;;          :publishing-function org-publish-attachment)
+      ;;         ("InterCompanyHub-Org"
+      ;;          :base-directory "~/Org/Project/CCONSSHA02/InterCompanyHub/"
+      ;;          :base-extension "org"
+      ;;          :publishing-directory "~/Git/InterCompanyHub/source/"
+      ;;          :recursive t
+      ;;          :publishing-function org-org-publish-to-org)              
+      ;;         ("InterCompanyHub" :components ("InterCompanyHub-html" "InterCompanyHub-Static" "InterCompanyHub-Org"))
+      ;;         ("2002CE-SUBVAL-Org"
+      ;;          :base-directory "~/Org/Project/CCONSSHA02/2002CE_SUBVAL"
+      ;;          :recursive t
+      ;;          :with-properties t
+      ;;          :publishing-directory "~/Git/2002CE_SubVal"
+      ;;          :publishing-function org-html-publish-to-html)
+      ;;         ("2002CE-SUBVAL-Static"
+      ;;          :base-directory "~/Org/Project/CCONSSHA02/2002CE_SUBVAL/IMG"
+      ;;          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+      ;;          :publishing-directory "~/Git/2002CE_SubVal/IMG"
+      ;;          :recursive t
+      ;;          :publishing-function org-publish-attachment)
+      ;;         ("2002CE-SUBVAL" :components ("2002CE-SUBVAL-Org" "2002CE-SUBVAL-Static"))              
+      ;;         ))
 
       ;; Publish with
       ;; (org-publish-current-project) ;; While having a file in your project open
@@ -483,32 +433,41 @@ same directory as the org-buffer and insert a link to this file."
 (define-key global-map (kbd "C-c c") 'org-capture)
 (define-key global-map (kbd "C-c l") 'org-store-link)
 
-(use-package org-super-agenda
-  :ensure t
-  :after org-agenda
-  :config
-  (setq org-super-agenda-groups
-        '((:name "Log "
-                 :log t)
-          (:name "Schedule "
-                 :time-grid t)          
-          (:name "Current Focus "
-                 :todo "STARTED")
-          (:name "Next"
-                 :todo "NEXT")          
-          (:name "Scheduled Today "
-                 :scheduled today)
-          (:name "Habits "
-                 :habit t)
-          (:name "Due today "
-                 :deadline today)
-          (:name "Overdue "
-                 :deadline past)
-          (:name "Due soon "
-                 :deadline future)
-          (:name "Scheduled earlier "
-                 :scheduled past)))
-  (org-super-agenda-mode))
+;; (use-package org-super-agenda
+;;   :ensure t
+;;   :after org-agenda
+;;   :config
+;;   (setq org-super-agenda-groups
+;;         '((:name "Log "
+;;                  :log t)
+;;           (:name "Schedule "
+;;                  :time-grid t)          
+;;           (:name "Current Focus "
+;;                  :todo "STARTED")
+;;           (:name "Next"
+;;                  :todo "NEXT")          
+;;           (:name "Scheduled Today "
+;;                  :scheduled today)
+;;           (:name "Habits "
+;;                  :habit t)
+;;           (:name "Due today "
+;;                  :deadline today)
+;;           (:name "Overdue "
+;;                  :deadline past)
+;;           (:name "Due soon "
+;;                  :deadline future)
+;;           (:name "Scheduled earlier "
+;;                  :scheduled past)))
+;;   (org-super-agenda-mode))
+
+(use-package org-superstar
+  :ensure t  
+  :init
+  (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+  (setq org-superstart-leading-bullt ?\s)
+  (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿"))
+  (setq org-indent-mode-turns-on-hiding-stars nil)
+  (setq org-superstar-special-todo-items t))
 
 (provide 'init-org)
 ;;; init-org.el ends here
